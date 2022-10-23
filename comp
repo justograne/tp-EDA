@@ -1,0 +1,82 @@
+import math
+
+N = 4
+x = 15
+y = 15
+
+#Posicion inicial particula
+particula = [math.pow(2, N-1)]*2
+
+def funcion_de_b(x):
+    b=0
+    while(x%2 == 0):
+        x /=2
+        b+=1
+    return b
+
+def funcion_de_a(x,b):
+    return (x / (math.pow(x,b)))
+
+b = funcion_de_b(x)
+a1 = funcion_de_a(x,b)
+a2 = funcion_de_a(y,b)
+
+pasos_x = [0] * (N-b)
+pasos_y = [0] * (N-b)
+
+def pasos_a_seguir(a, lista):
+    #a=2^b_prima + a_prima
+    b_prima = math.floor(math.log2(a))
+    a_prima = a - math.pow(2,b_prima)
+
+    if b_prima != 0:
+        lista[b_prima-1] = 1
+        pasos_a_seguir(a_prima, lista)
+    
+    return lista
+
+pasos_x = pasos_a_seguir(a1, pasos_x)
+pasos_y = pasos_a_seguir(a2, pasos_y)
+
+def activo_atractores(particula, N, pasos_x, pasos_y):
+    posicion_larga = math.pow(2,N)
+    for i in range(len(pasos_x)-1):
+        #Activo atractor en (0,0)
+        if(pasos_x[i]==0 and pasos_y[i]==0):
+            particula[0] = particula[0]/2
+            particula[1] = particula[1]/2
+
+        #Activo atractor en (0,2^N)
+        elif(pasos_x[i]==0 and pasos_y[i]==1):
+            particula[0] = particula[0]/2
+            particula[1] = (particula[1]+posicion_larga)/2
+
+        #Activo atractor en (2^N,2^N)
+        elif(pasos_x[i]==1 and pasos_y[i]==1):
+            particula[0] = (particula[0]+posicion_larga)/2
+            particula[1] = (particula[1]+posicion_larga)/2
+
+        #Activo atractor en (2^N,0)
+        elif(pasos_x[i]==1 and pasos_y[i]==0):
+            particula[0] = (particula[0]+posicion_larga)/2
+            particula[1] = particula[1]/2
+
+    return particula
+
+print("Ubicacion inicial particula:")
+print(particula)
+print("----------\n")
+
+print("Heuristica atractores")
+print(pasos_x)
+print(pasos_y)
+print("----------\n")
+
+print("Ubicacion final particula")
+print(activo_atractores(particula, N, pasos_x, pasos_y))
+
+
+
+
+
+
